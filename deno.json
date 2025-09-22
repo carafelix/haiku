@@ -1,0 +1,8 @@
+{
+  "tasks": {
+    "epub": "deno run -A src/utils/epub.ts"
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@1"
+  }
+}

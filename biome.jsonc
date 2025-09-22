@@ -10,7 +10,8 @@
       "!**/.vercel",
       "!**/.netlify",
       "!**/.vscode",
-      "!**/.astro"
+      "!**/.astro",
+      "!**/utils/*.ts"
     ]
   },
   "formatter": {

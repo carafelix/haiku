@@ -21,7 +21,12 @@ const mdLookup = Object.fromEntries(
             fileName,
             md.rendered?.html
                 .replaceAll('"', "'")
-                .replaceAll('\n', '<br>'),
+                .replaceAll('\n', '<br>')
+                .replace(
+                    /\|\|(.+)\|\|/,
+                    (_, group) =>
+                        `<details><summary>rōmanji</summary>${group}</details>`
+                ),
         ]
     })
 )

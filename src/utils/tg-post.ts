@@ -18,8 +18,8 @@ if (!BOT_TOKEN || !CHAT_ID || !POST_COUNTER) {
         CHAT_ID,
         POST_COUNTER,
     })
-        .filter(([key, value]) => !value)
-        .map(([key, value]) => key)
+        .filter(([_key, value]) => !value)
+        .map(([key, _value]) => key)
         .join(', ')
     throw `❌ Missing the following env variables: ${missing}. Please provide a working .env file`
 }
@@ -28,7 +28,6 @@ const api = new Api(BOT_TOKEN)
 api.config.use(autoRetry())
 
 const SPECIAL_CHARS = [
-    '\\',
     '_',
     '*',
     '~',

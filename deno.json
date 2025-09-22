@@ -1,6 +1,7 @@
 {
   "tasks": {
-    "epub": "deno run -A src/utils/epub.ts"
+    "epub": "deno run -A src/utils/epub.ts",
+    "tg-post": "deno run -A --env=.env src/utils/tg-post.ts"
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@1"

@@ -43,13 +43,12 @@ const SPECIAL_CHARS = [
     '{',
     '}',
     '.',
-    '(',
-    ')',
+    '/',
     '!',
 ]
 
-function escapeMarkdown(text: string) {
-    SPECIAL_CHARS.forEach(
+function escapeMarkdown(text: string, list?: string[]) {
+    ;(list || SPECIAL_CHARS).forEach(
         (char) =>
             (text = text.replaceAll(char, `\\${char}`))
     )
@@ -64,9 +63,12 @@ if (+POST_COUNTER + 1 === mds.length)
     throw 'Reached the last post of the list'
 
 const filename = mds[+POST_COUNTER].name
-const content = Deno.readTextFileSync(
+const [og, toSkip] = Deno.readTextFileSync(
     `src/content/${filename}`
-)
+).split('浮世絵:')
+
+const content =
+    og + '浮世絵:' + escapeMarkdown(toSkip, ['(', ')'])
 
 await api.sendPhoto(
     CHAT_ID,

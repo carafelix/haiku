@@ -57,6 +57,7 @@ function escapeMarkdown(text: string, list?: string[]) {
 const mds = Deno.readDirSync('src/content')
     .filter((file) => file.name.endsWith('.md'))
     .toArray()
+    .toSorted((a, b) => a.name.localeCompare(b.name))
 
 if (+POST_COUNTER + 1 === mds.length)
     throw 'Reached the last post of the list'

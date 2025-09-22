@@ -22,6 +22,9 @@ async function createEpubWithImages() {
                     file.isFile && file.name.endsWith('.md')
             )
             .toArray()
+            .toSorted((a, b) =>
+                a.name.localeCompare(b.name)
+            )
 
         if (files.length === 0) {
             throw new Error(
@@ -44,7 +47,7 @@ async function createEpubWithImages() {
                 (await Deno.readTextFile(mdPath))
                     .replace(/\|\|.+\|\|/, '')
                     .replaceAll(/\n{3,}/g, '\n\n') +
-                '<span class="pagebreak"></span>'
+                '<div style="page-break-before:always;"></div>'
 
             // Write original content to temp file
             await Deno.writeTextFile(tempMdPath, content)
@@ -54,9 +57,6 @@ async function createEpubWithImages() {
         processedFiles.push('src/utils/creditos.md')
         // Create CSS for page breaks
         const cssContent = `
-span.pagebreak {
-    page-break-after: always
-}
 img {
     max-width: 100%;
     height: auto;

@@ -54,7 +54,7 @@ async function createEpubWithImages() {
         processedFiles.push('src/utils/creditos.md')
         // Create CSS for page breaks
         const cssContent = `
-div.span {
+span.pagebreak {
     page-break-after: always
 }
 img {

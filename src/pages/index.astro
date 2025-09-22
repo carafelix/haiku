@@ -111,20 +111,6 @@ const mdLookup = Object.fromEntries(
             Autoplay: {
                 timeout: 6000,
             },
-            on: {
-                contentReady: (instance, eventName) => {
-                    const nodes =
-                        document.getElementsByClassName(
-                            '.has-caption p'
-                        )
-                    console.log(nodes)
-                },
-            },
-            formatCaption: (carouselRef, slide) => {
-                return `
-                ${slide.caption}
-               `
-            },
             transition: 'crossfade',
         },
     })

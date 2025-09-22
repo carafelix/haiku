@@ -3,7 +3,6 @@ import { Image } from 'astro:assets'
 import BaseLayout from '~/layouts/BaseLayout.astro'
 import '@fancyapps/ui/dist/fancybox/fancybox.css'
 import { getCollection } from 'astro:content'
-import { escapeHTML } from 'astro/runtime/server/escape.js'
 
 const images = import.meta.glob<{ default: ImageMetadata }>(
     '../content/imgs/*.{jpg,jpeg,png,webp}'
@@ -21,7 +20,7 @@ const mdLookup = Object.fromEntries(
             fileName,
             md.rendered?.html
                 .replaceAll('"', "'")
-                .replaceAll('\n', '<br>')
+                .replaceAll('—', '<br>—')
                 .replace(
                     /\|\|(.+)\|\|/,
                     (_, group) =>

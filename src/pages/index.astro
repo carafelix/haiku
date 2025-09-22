@@ -2,10 +2,31 @@
 import { Image } from 'astro:assets'
 import BaseLayout from '~/layouts/BaseLayout.astro'
 import '@fancyapps/ui/dist/fancybox/fancybox.css'
+import { getCollection } from 'astro:content'
+import { escapeHTML } from 'astro/runtime/server/escape.js'
 
 const images = import.meta.glob<{ default: ImageMetadata }>(
-    '../posts/imgs/*.{jpg,jpeg,png,webp}'
+    '../content/imgs/*.{jpg,jpeg,png,webp}'
 )
+
+const mds = await getCollection('haikus')
+
+const mdLookup = Object.fromEntries(
+    mds.map((md) => {
+        const fileName = md.filePath
+            ?.split('/')
+            .pop()
+            ?.replace('.md', '') // Get filename without extension
+        return [
+            fileName,
+            md.rendered?.html
+                .replaceAll('"', "'")
+                .replaceAll('\n', '<br>'),
+        ]
+    })
+)
+---
+
 ---
 
 <BaseLayout
@@ -18,13 +39,29 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
     >
         {
             Object.entries(images).map(
-                async ([_path, image], index) => {
+                async ([path, image], index) => {
                     const { default: imageData } =
                         await image()
+                    // Extract image filename without extension
+                    const imageFileName =
+                        path
+                            .split('/')
+                            .pop()
+                            ?.replace(
+                                /\.(jpg|jpeg|png|webp)$/,
+                                ''
+                            ) || ''
+
+                    // Find matching markdown file
+                    const matchingMd = imageFileName
+                        ? mdLookup[imageFileName]
+                        : null
+
                     return (
                         <a
                             style={`--width: ${imageData.width}; --height: ${imageData.height};`}
                             href={imageData.src}
+                            data-caption={matchingMd}
                             target='_blank'
                             data-fancybox='gallery'
                         >
@@ -32,7 +69,7 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
                                 format='webp'
                                 src={imageData}
                                 alt=''
-                                height={400}
+                                height={800}
                                 loading={
                                     index < 20
                                         ? 'eager'
@@ -62,12 +99,29 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
             Arrows: false,
             Toolbar: {
                 display: {
-                    left: [],
+                    left: ['autoplay'],
                     middle: [],
                     right: ['close'],
                 },
             },
-            transition: 'slide',
+            Autoplay: {
+                timeout: 6000,
+            },
+            on: {
+                contentReady: (instance, eventName) => {
+                    const nodes =
+                        document.getElementsByClassName(
+                            '.has-caption p'
+                        )
+                    console.log(nodes)
+                },
+            },
+            formatCaption: (carouselRef, slide) => {
+                return `
+                ${slide.caption}
+               `
+            },
+            transition: 'crossfade',
         },
     })
 </script>
@@ -76,7 +130,7 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
     .justified-gallery {
         --padding: max(2.5vw, 12px);
         --space: max(2.5vw, 12px);
-        --min-height: clamp(200px, 20vw, 400px);
+        --min-height: clamp(300px, 20vw, 600px);
 
         padding: var(--padding);
         display: flex;
